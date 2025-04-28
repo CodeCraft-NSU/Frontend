@@ -236,20 +236,25 @@ export const OutputEtc = ({oid, pid}: {oid: number, pid: number}) => {
                             {/* <a href='https://google.com' target='_blank' rel='noopener noreferror' style={{textDecoration: 'none', fontSize: '15px'}}>
                                 {data?.file_name}
                             </a> */}
+                            <div style={{float: 'right'}}><DynOutDelbtn data={{type: MsBox.outType.etc.value, oid: data?.file_no ?? -1}} pid={pid}/></div>
                             <button
                                 onClick={handleDownload}
                                 style={{
-                                    padding: '10px 20px',
+                                    padding: '8px 20px',
                                     backgroundColor: '#007BFF',
                                     color: '#fff',
                                     border: 'none',
                                     borderRadius: '5px',
                                     cursor: 'pointer',
+                                    float: 'right',
+                                    marginRight: '15px'
                                 }}
                                 >
                                 파일 다운로드
                                 </button>
+                                
                         </div>
+                        
                     </td>
                 </tr>
                 <tr style={{borderBottom: '0'}}>
@@ -1405,6 +1410,9 @@ export const OutputReq = ({oid, pid}: {oid: number, pid: number}) => {
           pid: pid,
           doc_r_no: oid,
           add_date: creationDate
+
+          // add_date: str
+          
         };
     
         try {
@@ -1666,6 +1674,7 @@ export const OutputReport = ({oid, pid}: {oid: number, pid: number}) => {
       const [systemArchitecture, setSystemArchitecture] = useState("");
       const [experimentResults, setExperimentResults] = useState("");
       const [conclusion, setConclusion] = useState("");
+      const [prof, setProf] = useState("");
 
     const loadData = async() => {
         try{
@@ -1682,6 +1691,7 @@ export const OutputReport = ({oid, pid}: {oid: number, pid: number}) => {
             setResearchGoal(parts[1] || "");
             // setProblemDefinition(foundData?.doc_rep_research || '')
             // setResearchGoal(foundData?.doc_rep_research || '')
+            setProf(foundData?.doc_rep_professor || '')
             setDesignProcess(foundData?.doc_rep_design || '')
             setSystemArchitecture(foundData?.doc_rep_arch || '')
             setExperimentResults(foundData?.doc_rep_result || '')
@@ -1720,7 +1730,7 @@ export const OutputReport = ({oid, pid}: {oid: number, pid: number}) => {
           rdate: submissionDate,
           rwriter: writer,
           pmember: teamMembers,
-          pprof: "",
+          pprof: prof,
           presearch: `${problemDefinition}\n${researchGoal}`,
           pdesign: designProcess,
           parch: systemArchitecture,
@@ -1854,7 +1864,7 @@ export const OutputReport = ({oid, pid}: {oid: number, pid: number}) => {
           <th style={thStyle}>작성자</th>
           <td style={tdStyle}>{data?.doc_rep_writer}</td>
           <th style={thStyle}>팀원 및 지도 교수</th>
-          <td style={tdStyle}>{`${data?.doc_rep_member}\n${data?.doc_rep_professor}`}</td>
+          <td style={tdStyle}>{`담당 교수: ${data?.doc_rep_professor}\n${data?.doc_rep_member}`}</td>
         </tr>
         
       </tbody>
@@ -1917,7 +1927,7 @@ const contentStyle: CSSProperties = { padding: "20px", backgroundColor: "#fff", 
 const titleStyle: CSSProperties = { fontSize: "24px", fontWeight: "bold", color: "#4CAF50", textAlign: "center", marginBottom: "20px" };
 const sectionHeaderStyle: CSSProperties = { backgroundColor: "#ddd", padding: "14px", border: "1px solid black", fontWeight: "bold", textAlign: "center" };
 const buttonContainerStyle: CSSProperties = { display: "flex", justifyContent: "center", marginTop: "20px" };
-const tdStyle: CSSProperties = { padding: "18px", border: "1px solid black", textAlign: "left" };
+const tdStyle: CSSProperties = { padding: "18px", border: "1px solid black", textAlign: "left", whiteSpace: 'pre-wrap' };
 
 
   const reportTitleStyle: CSSProperties = {

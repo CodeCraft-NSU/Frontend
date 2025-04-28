@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "대학생을 위한 웹 기반 PMS",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next -p 80",

@@ -8,6 +8,7 @@ import usePermissionGuard from '@/app/util/usePermissionGuard'
 import axios from 'axios'
 import { useState, useEffect, CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
+import SectionTooltip from "@/app/components/SectionTooltip"
 
 
 type ccp = {
@@ -204,6 +205,7 @@ export default function ProjectManage(props: any){
             const response = await axios.post("https://cd-api.chals.kim/api/ccp/export", data, {headers:{Authorization: process.env.SECRET_API_KEY}});
             setExportModalOpen(false)
             setLog("")
+            window.location.reload();
         }catch(err){
 
         }finally{
@@ -417,7 +419,7 @@ export default function ProjectManage(props: any){
   boxShadow: '0 5px 15px rgba(0,0,0,0.05)'
 }}>
   <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '30px' }}>
-    🛠️ 프로젝트 수정
+    🛠️ 프로젝트 수정 <SectionTooltip message="해당 프로젝트에 대한 초기 설정을 수정하는 곳 입니다." />
   </h1>
 
                                             <form onSubmit={handleEditPJ} style={{marginTop: '10px'}}>
@@ -651,7 +653,7 @@ export default function ProjectManage(props: any){
     fontWeight: 'bold',
     color: '#333',
     marginBottom: '20px'
-  }}>📜 프로젝트 변경 이력</h2>
+  }}>📜 프로젝트 변경 이력<SectionTooltip message="프로젝트에 대한 변경 혹은 이력사항을 불러오거나 저장하는 곳입니다." /></h2>
 
   <div style={{
     display: 'flex',

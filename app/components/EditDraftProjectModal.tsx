@@ -4,20 +4,49 @@ import { useState, useEffect, CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getUnivId } from '../util/storage';
+import Image from 'next/image';
+import agileImg from '../img/agile.png';
+import waterfallImg from '../img/waterfall.png';
+
 
 export function Modal({ isOpen, closeModal, children }: { isOpen: boolean; closeModal: () => void; children?: React.ReactNode }) {
-    
     return (
         isOpen && (
-        <div style={{position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.1)', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', zIndex: 9999}}>
-            <div style={{background: '#ffffff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px #000000', maxWidth: '500px', width: '100%'}}>
-                <div style={{width: '100%', display: 'flex'}}><div style={{marginLeft: 'auto'}}><button onClick={closeModal} style={{fontSize: '15px'}}>X</button></div></div>
+        <div style={{
+            position: 'fixed', top: '0', left: '0',
+            width: '100%', height: '100%',
+            background: 'rgba(0, 0, 0, 0.3)',
+            display: 'flex', justifyContent: 'center', alignItems: 'center',
+            zIndex: 9999
+        }}>
+            <div style={{
+                background: '#ffffff',
+                padding: '30px',
+                borderRadius: '12px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+                maxWidth: '800px',
+                width: '90%',
+                height: '90vh',
+                overflowY: 'auto',
+                position: 'relative'
+            }}>
+                <div style={{width: '100%', display: 'flex'}}>
+                    <div style={{marginLeft: 'auto'}}>
+                        <button onClick={closeModal} style={{
+                            fontSize: '18px',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer'
+                        }}>❌</button>
+                    </div>
+                </div>
                 {children}
             </div>
         </div>
         )
     );
 }
+
 
 type draft = {
     leader_univ_id: number
@@ -124,6 +153,7 @@ type cppList = {
   };
 
 export function EditDraftProjectModal() {
+    const [methodDesc, setMethodDesc] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [newPj, setNewPj] = useState(true);
     const router = useRouter();
@@ -143,7 +173,7 @@ export function EditDraftProjectModal() {
     const [endDate, setEndDate] = useState('');
     const [members, setMembers] = useState(0);
     const [method, setMethod] = useState(0);
-    const [profId, setProfId] = useState<number>(0);
+    const [profId, setProfId] = useState<number>(99121);
     const [subject, setSubject] = useState(13230);
     const [draftId, setDraftId] = useState(0);
     const [isNew, setIsNew] = useState(true);
@@ -205,7 +235,22 @@ export function EditDraftProjectModal() {
           setRecoveryLoading(false);
         }
       };
-
+      useEffect(() => {
+        switch (method) {
+            case 0:
+                setMethodDesc("📘 폭포수 모델: 단계별로 순차적으로 개발하는 전통적인 개발 방식입니다. 변경에 취약하지만 계획에 충실합니다.");
+                break;
+            case 1:
+                setMethodDesc("🚀 애자일 모델: 빠른 피드백과 유연한 개발을 지향하는 방식으로 반복적으로 개선합니다.");
+                break;
+            case 2:
+                setMethodDesc("⚙️ 기타: 팀에 맞는 자체 개발 방식을 사용하거나 위 두 가지 외의 방식을 선택합니다.");
+                break;
+            default:
+                setMethodDesc('');
+        }
+    }, [method]);
+    
     // useEffect(() => {
     //     const groups = logList.reduce((acc: Record<number, cppList[]>, log) => {
     //         if (!acc[log.p_no]) {
@@ -543,45 +588,61 @@ export function EditDraftProjectModal() {
                                 <form onSubmit={handleSubmit} onKeyDown={(e) => {if (e.key === "Enter"){e.preventDefault();}}} style={{ padding: '30px', borderRadius: '12px', backgroundColor: '#ffffff' }}>
                                 {newPj?(<h2>새로운 프로젝트</h2>):(<h2 style={{ textAlign: 'center', marginBottom: '20px', fontWeight: 'bold', color: '#333' }}>프로젝트 개설</h2>)}
                                 <div style={{ marginBottom: '15px' }}>
-                                    <label htmlFor="projectName" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>프로젝트 이름:</label>
-                                    <input
-                                        type="text"
-                                        id="projectName"
-                                        value={projectName}
-                                        onChange={(e) => setProjectName(e.target.value)}
-                                        required
-                                        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
-                                    />
-                                </div>
-                                <div style={{ marginBottom: '15px' }}>
-                                    <label htmlFor="projectDescription" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>프로젝트 설명:</label>
-                                    <textarea
-                                        id="projectDescription"
-                                        value={projectDescription}
-                                        onChange={(e) => setProjectDescription(e.target.value)}
-                                        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', resize: 'vertical' }}
-                                    ></textarea>
-                                </div>
-                                <div style={{ marginBottom: '15px' }}>
-                                    <label htmlFor="startDate" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>시작일:</label>
-                                    <input
-                                        type="date"
-                                        id="startDate"
-                                        value={startDate}
-                                        onChange={(e) => setStartDate(e.target.value)}
-                                        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
-                                    />
-                                </div>
-                                <div style={{ marginBottom: '15px' }}>
-                                    <label htmlFor="endDate" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>마감일:</label>
-                                    <input
-                                        type="date"
-                                        id="endDate"
-                                        value={endDate}
-                                        onChange={(e) => setEndDate(e.target.value)}
-                                        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
-                                    />
-                                </div>
+    <label htmlFor="projectName" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>프로젝트 이름:</label>
+    <input
+        type="text"
+        id="projectName"
+        value={projectName}
+        onChange={(e) => setProjectName(e.target.value)}
+        required
+        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
+    />
+    <p style={{ fontSize: '13px', color: '#777', marginTop: '5px' }}>
+        ex) 스마트팜 IoT 관리 시스템, AI 챗봇 개발 등. 명확하고 구체적인 이름을 작성해주세요.
+    </p>
+</div>
+
+<div style={{ marginBottom: '15px' }}>
+    <label htmlFor="projectDescription" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>프로젝트 설명:</label>
+    <textarea
+        id="projectDescription"
+        value={projectDescription}
+        onChange={(e) => setProjectDescription(e.target.value)}
+        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd', resize: 'vertical' }}
+    ></textarea>
+    <p style={{ fontSize: '13px', color: '#777', marginTop: '5px' }}>
+        프로젝트 목표, 주요 기능, 기대 효과 등을 간단히 작성해주세요. (3~5줄 권장)
+    </p>
+</div>
+
+<div style={{ marginBottom: '15px' }}>
+    <label htmlFor="startDate" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>시작일:</label>
+    <input
+        type="date"
+        id="startDate"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
+    />
+    <p style={{ fontSize: '13px', color: '#777', marginTop: '5px' }}>
+        프로젝트 시작 날짜를 선택해주세요. (예: 2024-05-01)
+    </p>
+</div>
+
+<div style={{ marginBottom: '15px' }}>
+    <label htmlFor="endDate" style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>마감일:</label>
+    <input
+        type="date"
+        id="endDate"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
+    />
+    <p style={{ fontSize: '13px', color: '#777', marginTop: '5px' }}>
+        프로젝트 최종 제출 예정일을 설정해주세요. (예: 2024-07-15)
+    </p>
+</div>
+
                                 <div style={{width: '100%', display: 'flex'}}>
                                     <button type="button" onClick={postDraft} style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', width: 'auto', fontWeight: 'bold' }}>임시 저장</button>
                                     <button type="button" onClick={handlePageDown} style={{ padding: '5px', marginLeft: 'auto', marginRight: '0px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', width: 'auto', fontWeight: 'bold' }}>이전 페이지</button>
@@ -652,6 +713,44 @@ export function EditDraftProjectModal() {
                                                 <option value={1}>에자일 모델</option>
                                                 <option value={2}>기타</option>
                                             </select>
+                                           
+{methodDesc && (
+  <div style={{ marginTop: '10px', fontSize: '14px', color: '#555', background: '#f9f9f9', padding: '10px 12px', borderRadius: '8px' }}>
+    {methodDesc}
+  </div>
+)}
+
+{/* 개발 방식 선택에 따라 예시 이미지 출력 */}
+{method === 0 && (
+  <div style={{ marginTop: '20px', textAlign: 'center' }}>
+    <Image
+      src={waterfallImg}
+      alt="폭포수 모델 예시"
+      layout="responsive"
+      width={500}
+      height={300}
+      style={{ objectFit: 'contain', borderRadius: '8px', marginTop: '10px' }}
+    />
+    <div style={{ marginTop: '5px', fontSize: '13px', color: '#777' }}>폭포수 모델 예시</div>
+  </div>
+)}
+
+{method === 1 && (
+  <div style={{ marginTop: '20px', textAlign: 'center' }}>
+    <Image
+      src={agileImg}
+      alt="애자일 모델 예시"
+      layout="responsive"
+      width={500}
+      height={300}
+      style={{ objectFit: 'contain', borderRadius: '8px', marginTop: '10px' }}
+    />
+    <div style={{ marginTop: '5px', fontSize: '13px', color: '#777' }}>애자일 모델 예시</div>
+  </div>
+)}
+
+
+
                                         </div>
                                         <div style={{width: '100%', display: 'flex'}}>
                                             <button type="button" onClick={postDraft} style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', width: 'auto', fontWeight: 'bold' }}>임시 저장</button>

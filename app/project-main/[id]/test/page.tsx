@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { listType, returnEtc, etcType, returnOvr, ovrType, returnMm, mmType, returnReq, reqType, returnTest, testType, returnReport, reportType } from '@/app/util/types';
 import DocumentTable2 from "@/app/components/DocumentTable2";
+import SideAccount from "@/app/components/SideAccount";
 
 function formatDate(input: string): string {
   const d = new Date(input);
@@ -16,8 +17,8 @@ function formatDate(input: string): string {
 
 export default function Test(props: any) {
     return(
-        <div style={{width: '1000px'}}>
-            <DocumentTable2 pid={props.params.id}/>
+        <div style={{width: '400px'}}>
+            <SideAccount/>
         </div>
     )
 }

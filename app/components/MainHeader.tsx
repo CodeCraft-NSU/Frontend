@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getToken, getUnivId, getUserId } from '../util/storage';
 import useSessionGuard from '../util/checkAccount';
+import SectionTooltip from './SectionTooltip';
 
 type fetchType = {
   "RESULT_CODE": number, 
@@ -199,7 +200,7 @@ const MainHeader = ({ pid }: { pid: number }) => {
       
 
       {/* ✅ 진척도 표시 */}
-      <div style={{ flex: 1, textAlign: "center", maxWidth: "900px" }}>
+      <div style={{ flex: 1, textAlign: "center", maxWidth: "900px", display: 'flex' }}>
         {jinchek(pid)}
       </div>
     </header>

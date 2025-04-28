@@ -22,25 +22,28 @@ export default function LibraryPage({
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
+        height: "100%",
         fontFamily: "'Pretendard', 'sans-serif'",
         backgroundColor: "#f3f4f6",
-        overflow: "hidden",
+        overflow: "visible",
       }}
     >
       <MainHeader pid={params.id} />
 
-      <div style={{ display: "flex", flex: 1, overflowY: "auto" }}>
+      <div style={{ display: "flex", flex: 1,}}>
         <MainSide pid={params.id} />
 
         <div
           style={{
             flex: 1,
+            display: "flex",
+            flexDirection: 'column',
             margin: "30px 40px",
             backgroundColor: "#ffffff",
             borderRadius: "16px",
             boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
             padding: "40px 50px",
+            overflow: 'hidden'
           }}
         >
           <h1
@@ -69,8 +72,10 @@ export default function LibraryPage({
           >
             제공된 자료를 다운로드하여 자유롭게 사용할 수 있습니다.
           </div>
-
-          <LibraryTable pid={params.id} />
+          <div style={{flex: 1, overflow: 'auto'}}>
+            <LibraryTable pid={params.id} />
+          </div>
+          
         </div>
       </div>
     </div>

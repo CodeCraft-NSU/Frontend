@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getUnivId } from "@/app/util/storage";
 import usePermissionGuard from "@/app/util/usePermissionGuard";
+import SectionTooltip from "@/app/components/SectionTooltip"
+
 
 type userList = {
   univ_id: number,
@@ -131,6 +133,7 @@ export default function ProjectOverview(props: any) {
 
   const handleUploadFile = async (doc_id: number) => {
     if (tmpfile.length === 0) {
+        router.push(`/project-main/${props.params.id}/outputManagement`);
         return;
     }
     const tmppid: number = props.params.id;
@@ -150,10 +153,7 @@ export default function ProjectOverview(props: any) {
             formData,
             { headers: { Authorization: process.env.SECRET_API_KEY } }
         );
-
-        if (response.data.RESULT_CODE === 200) {
             router.push(`/project-main/${props.params.id}/outputManagement`);
-        }
     } catch (err) {
         alert('❌ 파일 업로드 실패');
     }
@@ -165,29 +165,33 @@ export default function ProjectOverview(props: any) {
       <div style={layoutContainerStyle}>
         <MainSide pid={props.params.id} />
         <div style={contentContainerStyle}>
-          <h2 style={sectionHeaderStyle}>📄 프로젝트 개요서 4</h2>
+        <h2 style={sectionHeaderStyle}>
+        📄 프로젝트 개요서
+         <SectionTooltip message="해당 프로젝트에 대한 전체 개요를 입력하는 항목입니다. 목적, 일정, 인원 등을 포함하세요." />
+</h2>
+          
 
           <table style={tableStyle}>
             <tbody>
               {/* 프로젝트 기본 정보 */}
               <tr>
-                <td style={thStyle}>제 목</td>
+                <td style={thStyle}>제목  <SectionTooltip message="프로젝트 제목을 입력하세요. 명확하고 간결하게 작성하세요." /> </td>
                 <td colSpan={3} style={tdStyle}><TitleField value={title} setter={setTitle} /></td>
               </tr>
               <tr>
-                <td style={thStyle}>프로젝트 시작일</td>
+                <td style={thStyle}>프로젝트 시작일 <SectionTooltip message="프로젝트 시작일을 설정하세요." /></td>
                 <td style={tdStyle}><Field type="date" value={startDate} setter={setStartDate} /></td>
-                <td style={thStyle}>프로젝트 종료일</td>
+                <td style={thStyle}>프로젝트 종료일 <SectionTooltip message="프로젝트 종료일을 설정하세요." /></td>
                 <td style={tdStyle}><Field type="date" value={endDate} setter={setEndDate} /></td>
               </tr>
               <tr>
-              <td style={thStyle}>작성일</td>
+              <td style={thStyle}>작성일 <SectionTooltip message="문서 작성일을 설정하세요. 일반적으로 오늘 날짜를 입력합니다." /></td>
                  <td colSpan={3} style={tdStyle}><DateField value={createdDate} setter={setCreatedDate} /></td>
                 </tr>
 
 
               {/* 팀 구성 및 역할 분담 */}
-              <tr><td colSpan={4} style={thStyle}>팀 구성 및 역할 분담</td></tr>
+              <tr><td colSpan={4} style={thStyle}>팀 구성 및 역할 분담 <SectionTooltip message="팀원 이름을 선택하시면 자동으로 학번이 기입됩니다." /> </td></tr>
 {teamMembers.map((member, index) => (
   <tr key={index}>
     <td colSpan={4} style={tdStyle}>
@@ -231,23 +235,23 @@ export default function ProjectOverview(props: any) {
 
 
               {/* 프로젝트 개요 */}
-              <tr><td colSpan={4} style={thStyle}>프로젝트 개요</td></tr>
+              <tr><td colSpan={4} style={thStyle}>프로젝트 개요<SectionTooltip message="프로젝트의 전반적인 내용을 요약하여 작성하세요." /></td></tr>
               <tr><td colSpan={4} style={tdStyle}><TextAreaField value={overview} setter={setOverview} /></td></tr>
 
               {/* 프로젝트 목표 */}
-              <tr><td colSpan={4} style={thStyle}>프로젝트 목표</td></tr>
+              <tr><td colSpan={4} style={thStyle}>프로젝트 목표<SectionTooltip message="프로젝트를 통해 달성하고자 하는 주요 목표를 작성하세요." /></td></tr>
               <tr><td colSpan={4} style={tdStyle}><TextAreaField value={goal} setter={setGoal} /></td></tr>
 
               {/* 프로젝트 범위 */}
-              <tr><td colSpan={4} style={thStyle}>프로젝트 범위</td></tr>
+              <tr><td colSpan={4} style={thStyle}>프로젝트 범위<SectionTooltip message="프로젝트의 작업 범위 및 제외 항목을 명시하세요." /></td></tr>
               <tr><td colSpan={4} style={tdStyle}><TextAreaField value={scope} setter={setScope} /></td></tr>
 
               {/* ✅ 기술 스택 */}
-              <tr><td colSpan={4} style={thStyle}>기술 스택</td></tr>
+              <tr><td colSpan={4} style={thStyle}>기술 스택<SectionTooltip message="사용 예정인 언어, 프레임워크, 라이브러리 등을 입력하세요." /></td></tr>
               <tr><td colSpan={4} style={tdStyle}><TextAreaField value={techStack} setter={setTechStack} /></td></tr>
 
               {/* ✅ 기대 성과 */}
-              <tr><td colSpan={4} style={thStyle}>기대 성과</td></tr>
+              <tr><td colSpan={4} style={thStyle}>기대 성과<SectionTooltip message="프로젝트 완료 시 기대하는 결과나 효과를 작성하세요." /></td></tr>
               <tr><td colSpan={4} style={tdStyle}><TextAreaField value={expectedOutcomes} setter={setExpectedOutcomes} /></td></tr>
             </tbody>
           </table>
@@ -255,7 +259,8 @@ export default function ProjectOverview(props: any) {
                     <div style={formContainerStyle}>
                       <div style={{display: 'flex', width: '100%'}}>
                         <span style={{ fontSize: '16px', color: '#6b7280', whiteSpace: 'pre-wrap', alignSelf: 'flex-start' }}>
-                            {`프로젝트와 관련된 파일을 업로드하세요.\n한번에 여러개의 파일을 업로드할 수 있습니다..`}
+                            {`프로젝트와 관련된 파일을 업로드하세요.\n한번에 여러개의 파일을 업로드할 수 있습니다.`}
+                            <SectionTooltip message="문서와 관련된 참고자료, 이미지, 추가 문서를 업로드하세요. 여러 파일을 지원합니다." />
                         </span>
                         <div style={{marginLeft: 'auto', width: '40%'}}>
                         <input type="file" multiple onChange={handleFileChange} style={fileInputStyle} ref={fileInputRef} />

@@ -42,7 +42,6 @@ const DocumentDownloadBtn = ({d_type, d_no, d_name}: {d_type: number, d_no: numb
             const response = await axios.post("https://cd-api.chals.kim/api/docs/convert", data, {headers:{Authorization: process.env.SECRET_API_KEY}});
 
             const fileUrl = `/uploads/${dname}_${tmp_no}.docx`;
-            console.log(fileUrl, d_type)
             const link = document.createElement("a");
             link.href = fileUrl;
             link.download = `${dname}.docx`

@@ -1,10 +1,53 @@
 'use client'
 
 import library from "@/app/json/library.json";
-import Link from "next/link";
+import LibraryDownloadBtn from "./LibraryDownload";
+import { useEffect, useState } from "react";
+import Pagenation from "./pagenation"
+import axios from "axios";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const LibraryTable = ({ pid }: { pid: number }) => {
   const libraryList = library.list;
+  const [files, setFiles] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const pageParam = parseInt(searchParams.get("page") || "1", 10)
+  const [currentPage, setCurrentPage] = useState(pageParam)
+
+  const itemsPerPage = 7
+  const totalPages = Math.ceil(files.length / itemsPerPage)
+  const startIdx = (currentPage - 1) * itemsPerPage
+  const currentFiles = files.slice(startIdx, startIdx + itemsPerPage)
+
+  useEffect(() => {
+    const getLibrary = async() => {
+    try{
+      const response = await axios.get("/api/library").then((response) => {setFiles(response.data.files)})
+    }catch(err){
+
+    }finally{
+      setLoading(false)
+    }
+    }
+    getLibrary()
+  },[])
+
+  useEffect(() => {
+    if (pageParam >= 1 && pageParam <= totalPages) {
+      setCurrentPage(pageParam)
+    }
+  }, [pageParam, totalPages])
+
+  if (loading) {
+    return <p style={{ textAlign: "center", padding: "20px" }}>불러오는 중...</p>;
+  }
+
+  if (files.length === 0) {
+    return <p style={{ textAlign: "center", padding: "20px" }}>등록된 파일이 없습니다.</p>;
+  }
 
   return (
     <div
@@ -38,9 +81,9 @@ const LibraryTable = ({ pid }: { pid: number }) => {
       </div>
 
       {/* 테이블 행 */}
-      {libraryList.map((item, index) => (
+      {currentFiles.map((item, index) => (
         <div
-          key={item.key}
+          key={item}
           style={{
             display: "grid",
             gridTemplateColumns: "80px 1fr 140px",
@@ -65,35 +108,22 @@ const LibraryTable = ({ pid }: { pid: number }) => {
               fontWeight: 500,
             }}
           >
-            {index + 1}
+            {startIdx + index + 1}
           </div>
-          <div style={{ wordBreak: "break-word" }}>{item.name}</div>
+          <div style={{ wordBreak: "break-word" }}>{item}</div>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Link
-              href={`/project-main/${pid}/library/${item.type}`}
-              style={{
-                backgroundColor: "#22c55e",
-                color: "#fff",
-                padding: "6px 12px",
-                borderRadius: "6px",
-                fontSize: "14px",
-                fontWeight: "bold",
-                textDecoration: "none",
-                display: "inline-block",
-                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#16a34a")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "#22c55e")
-              }
-            >
-              📥 다운로드
-            </Link>
+            <LibraryDownloadBtn link={item} />
           </div>
         </div>
       ))}
+
+      {/* 페이지네이션 */}
+      <Pagenation
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath={pathname}
+      />
+
     </div>
   );
 };

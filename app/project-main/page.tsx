@@ -6,8 +6,9 @@ import TodoList from "@/app/components/Todo";
 import LLMChat from "@/app/components/LLMChat";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getToken, getUserId } from "../util/storage";
+import { getToken, getUnivId, getUserId } from "../util/storage";
 import { useRouter } from "next/navigation";
+import useSessionGuard from "../util/checkAccount";
 
 type wbsRatio = {
   group1no: number;
@@ -15,55 +16,85 @@ type wbsRatio = {
   ratio: number;
 };
 
+type projectType = {
+  p_no: number
+  p_name: string
+  p_content: string
+  p_method: string
+  p_memcount: number
+  p_start: string
+  p_end: string
+  p_wizard: number
+  subj_no: number
+  dno: number
+  f_no: number
+}
+
 export default function Main(props: any) {
   const [ratio, setRatio] = useState<wbsRatio[]>([]);
+  const [showMine, setShowMine] = useState(false);
   const [showPopup, setShowPopup] = useState(true); // ✅ 팝업 상태 추가
-  const [projectId, setProjectId] = useState<number | null>(null);
+  const [exproject, setExpProject] = useState<projectType[]>([{
+    p_no: 0,
+    p_name: '',
+    p_content: '',
+    p_method: '',
+    p_memcount: 0,
+    p_start: '',
+    p_end: '',
+    p_wizard: 0,
+    subj_no: 0,
+    dno: 0,
+    f_no: 0
+  }])
+  const router = useRouter()
+  const [myDno, setMyDno] = useState(0)
+  const uid = getUnivId()
 
-  const check = async() => {
-    const uid = getUserId();
-    const token = getToken();
-    const router = useRouter();
-    try{
-      const response = await axios.post(
-        "https://cd-api.chals.kim/api/acc/checksession",
-        { user_id: uid,
-          token: token },
-        { headers: { Authorization: process.env.SECRET_API_KEY } }
-      );
+  const session = useSessionGuard()
 
-      if(response.data.RESULT_CODE !== 200){router.push('/')}
-    }catch(err){}
-  }
-
-  const loadWBS = async () => {
-    if (!projectId) return;
-
-    try {
-      const response = await axios.post(
-        "https://cd-api.chals.kim/api/wbs/load_ratio",
-        { pid: projectId },
-        { headers: { Authorization: process.env.SECRET_API_KEY } }
-      );
-      const tmpRatio = response.data.RESULT_MSG;
-      setRatio(tmpRatio);
-    } catch (err) {
-      console.error("진척도 로드 실패:", err);
+  useEffect(() => {
+    const loadPro = async() => {
+      try{
+        const response = await axios.post(
+          "https://cd-api.chals.kim/api/project/load_exp",
+          {},
+          { headers: { Authorization: process.env.SECRET_API_KEY } }
+        );
+        // const tmp: projectType[] = response.data.PAYLOAD.Result
+        setExpProject(response.data.PAYLOAD.Result)
+      }catch(err){}
     }
-  };
+    const loadDno = async() => {
+      try{
+        const response = await axios.post(
+          "https://cd-api.chals.kim/api/acc/load_acc",
+          {univ_id: uid},
+          { headers: { Authorization: process.env.SECRET_API_KEY } }
+        );
+        setMyDno(response.data.PAYLOAD.Result.dno);
+      }catch(err){}
+    }
+    loadPro();
+    loadDno()
+  }, [])
 
-  const handleProjectSelection = (id: number) => {
-    setProjectId(id);
-    setShowPopup(false);
-  };
+  useEffect(() => {
+    console.log(myDno)
+  }, [myDno])
 
   const handleClosePopup = () => {
     setShowPopup(false);
   };
 
-  useEffect(() => {
-    // loadWBS();
-  }, [projectId]);
+  const handleClick = (pid: number) => {
+    
+    router.push(`/project-view/${pid}/main`)
+  }
+
+  const filtered = exproject.filter((p) =>
+    showMine ? p.dno === myDno : true
+  );
 
   return (
     <div style={{ height: "100vh"}}>
@@ -140,13 +171,13 @@ export default function Main(props: any) {
                 flexDirection: "column",
               }}
             >
-              <div style={{ marginBottom: "10px", fontSize: "16px", fontWeight: "bold" }}>Todo List 2</div>
+              <div style={{ marginBottom: "10px", fontSize: "16px", fontWeight: "bold" }}>Todo List</div>
               <div style={{ borderBottom: "2px solid #ddd", marginBottom: "5px" }}></div>
               {/* <TodoList p_id={projectId || 0} /> */}
             </div>
           </div>
           <div style={{ display: "flex", gap: "10px", height: '70%'}}>
-            {/* 팀원 */}
+            {/* 프로젝트 */}
             <div
               style={{
                 flex: 1, 
@@ -159,24 +190,44 @@ export default function Main(props: any) {
                 overflowY: 'auto',
               }}
             >
-              <div style={{ marginBottom: "10px", fontSize: "16px", fontWeight: "bold" }}>팀원2</div>
-              <div style={{ borderBottom: "2px solid #ddd", marginBottom: "10px" }}></div> {/**밑줄 */}
-              <div style={{height: '80%', width: '95%'}}> {/**팀 인원 넣는 칸 */}
-                <div style={{display: 'flex', width: '100%', whiteSpace: "pre-wrap"}}> {/**팀장 및 담당교수 */}
-                  <div style={{position: "relative", width: '30%', height: '100px',
-                    // border: '1px solid #000', 
-                    display: 'flex', alignItems: 'flex-end'}}>
-                    
-                    
-                  </div>
-                  <div style={{position: "relative", width: '30%', height: '100px',
-                    // border: '1px solid #000', 
-                    display: 'flex', alignItems: 'flex-end', marginLeft: 'auto'}}>
-                  
-                  </div>
+              {session === 1 ? (
+                <div>
+                  <div style={{ marginBottom: "10px", fontSize: "16px", fontWeight: "bold" }}>종료된 프로젝트 열람</div>
+                  <label style={{ fontSize: "14px" }}>
+                      <input
+                        type="checkbox"
+                        checked={showMine}
+                        onChange={(e) => setShowMine(e.target.checked)}
+                        style={{ marginRight: "6px" }}
+                      />
+                      나의 학과 프로젝트만 보기
+                    </label>
+                  <div style={{ borderBottom: "2px solid #ddd", marginBottom: "10px" }}></div> {/**밑줄 */}
+                  <div style={{height: '80%', width: '95%'}}>
+                    {filtered.map((item, index) => (
+                      <div 
+                        key={index} 
+                        style={{width: '100%', minHeight: '70px', padding: '7px', cursor: 'pointer', border: '1px solid #000', borderRadius: '10px', display: "flex", flexDirection: "column", marginBottom: '7px'}}
+                        onClick={() => handleClick(item.p_no)}
+                      >
+                        <span style={{marginBottom: '10px'}}>{item.p_name}</span>
+                        <span>개발 방법론: {item.p_method === '0' ? "폭포수" : (item.p_method === '1' ? '애자일' : '기타')}</span>
+                        <span>{`기간: ${item.p_start} ~ ${item.p_end}`}</span>
+                      </div>
+                    ))}
+                    {filtered.length === 0 && (
+                      <div style={{ textAlign: "center", color: "#888" }}>
+                        {showMine
+                          ? "내 학과의 종료된 프로젝트가 없습니다."
+                          : "종료된 프로젝트가 없습니다."}
+                      </div>
+                    )}
+                  </div> 
                 </div>
-                
-              </div>
+            ) : (
+            <div></div>
+            )}
+                 
             </div>
 
             {/* LLM 섹션 */}
@@ -191,7 +242,7 @@ export default function Main(props: any) {
                 flexDirection: "column",
               }}
             >
-              <div style={{ marginBottom: "10px", fontSize: "16px", fontWeight: "bold" }}>PMS Assistant</div>
+              <div style={{ marginBottom: "10px", fontSize: "16px", fontWeight: "bold" }}>PMS Advisor</div>
               <div style={{ borderBottom: "2px solid #ddd", marginBottom: "10px" }}></div>
               <div style={{ fontSize: "14px", color: "#777", height: '100%' }}>
                 {/* <LLMChat pid = {props.params.id} /> */}

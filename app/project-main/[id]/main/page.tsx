@@ -12,6 +12,7 @@ import usePermissionGuard from "@/app/util/usePermissionGuard";
 import { getUnivId } from "@/app/util/storage";
 import LLMManagement from "@/app/components/LLMManagement";
 import { useCallback } from "react";
+import SectionTooltip from "@/app/components/SectionTooltip";
 
 
 type wbs = {
@@ -69,13 +70,34 @@ export default function Main(props: any) {
       if(tmpRatio.length === 1 && tmpRatio[0].group1 === "") setNoData(true);
     }catch(err){}
   }
+  const [persent, setPersent] = useState(0);
+  const loadData = async() => {
+    
+    try{
+      const response = await axios.post("https://cd-api.chals.kim/api/wbs/fetch_all", {pid: props.params.id}, {headers:{Authorization: process.env.SECRET_API_KEY}});
+      if(response.data.RESULT_CODE === 200){
+        const parsePersent = fixData(response.data.PAYLOADS);
+        setPersent(parsePersent);
+      }
+    }catch(err){
 
+    }
+  };
+  const fixData = (data: any[]): number => {
+    const value = data.map((row) => row.ratio as number);
+    const total = value.reduce((sum, value) => sum + value, 0);
+    const average = total / value.length;
+    return Math.round(average) || 0;
+  }
 
   useEffect(() => {
     loadWBS()
     loadProf()
     loadUser()
+    loadData()
   }, [])
+
+// 어라 수정중이였는데..?
 
   const loadProf = async() => {
     const pid: number = props.params.id;
@@ -172,7 +194,7 @@ setTeam(tmp2);
           strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={`${2 * Math.PI * 50}`}
-          strokeDashoffset={`${2 * Math.PI * 50 * (1 - getAverageRatio() / 100)}`}
+          strokeDashoffset={`${2 * Math.PI * 50 * (1 - persent / 100)}`}
           r="50"
           cx="60"
           cy="60"
@@ -189,48 +211,88 @@ setTeam(tmp2);
           fontWeight: "bold",
         }}
       >
-        {`${getAverageRatio()}%`}
+        {`${persent}%`}
       </div>
-      <div style={{ textAlign: "center", fontSize: "14px", marginTop: "10px" }}>진척도</div>
+      <div style={{ textAlign: "center", fontSize: "14px", marginTop: "10px" }}>
+        진척도
+        <SectionTooltip message={"전체 진척도는 각 작업(WBS 항목)들의 진척도를 모두 합한 뒤, 작업 항목의 수로 나눈 평균 값입니다."}/>
+      </div>
     </div>
 
-    {/* 막대형 카테고리 진척도 */}
+    {/* 막대형 카테고리 진척도 or 안내문 */}
     <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "15px" }}>
-    {Array.from({ length: Math.ceil(ratio.length / 2) }, (_, rowIndex) => (
-  <div key={rowIndex} style={{ display: "flex", gap: "40px", justifyContent: "space-between" }}>
-    {ratio.slice(rowIndex * 2, rowIndex * 2 + 2).map((item, colIndex) => (
-      <div
-        key={colIndex}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          width: "calc(50% - 20px)", // 여기에서 비율 조절!
-          gap: "10px",
-        }}
-      >
-        <span style={{ width: "60px", fontWeight: "bold", whiteSpace: "nowrap" }}>{item.group1}</span>
-        <div style={{
-          flex: 1,
-          height: "12px",
-          backgroundColor: "#e0e0e0",
-          borderRadius: "6px",
-          overflow: "hidden",
-        }}>
-          <div style={{
-            width: `${item.ratio}%`,
-            height: "100%",
-            backgroundColor: item.ratio === 0 ? "transparent" : "#4db8ff",
-            transition: "width 0.3s ease-in-out",
-          }} />
+      {noData ? (
+        // noData 가 true 일 때
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "18px",
+            color: "#888",
+          }}
+        >
+          🚧 아직 WBS가 없습니다. WBS를 생성해주세요.
         </div>
-        <span style={{ width: "40px", textAlign: "right" }}>{item.ratio}%</span>
-      </div>
-    ))}
-  </div>
-))}
-
-</div>
-
+      ) : (
+        // noData 가 false 일 때 (기존 진척도 막대)
+        Array.from({ length: Math.ceil(ratio.length / 2) }, (_, rowIndex) => (
+          <div
+            key={rowIndex}
+            style={{ display: "flex", gap: "40px", justifyContent: "space-between" }}
+          >
+            {ratio
+              .slice(rowIndex * 2, rowIndex * 2 + 2)
+              .map((item, colIndex) => (
+                <div
+                  key={colIndex}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "calc(50% - 20px)",
+                    gap: "10px",
+                  }}
+                >
+                  <span
+                    style={{
+                      minWidth: "60px",
+                      maxWidth: "90px",
+                      fontWeight: "bold",
+                      fontSize: "13px",
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {item.group1}
+                  </span>
+                  <div
+                    style={{
+                      flex: 1,
+                      height: "12px",
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "6px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${item.ratio}%`,
+                        height: "100%",
+                        backgroundColor: item.ratio === 0 ? "transparent" : "#4db8ff",
+                        transition: "width 0.3s ease-in-out",
+                      }}
+                    />
+                  </div>
+                  <span style={{ width: "40px", textAlign: "right" }}>
+                    {item.ratio}%
+                  </span>
+                </div>
+              ))}
+          </div>
+        ))
+      )}
+    </div>
   </div>
 
   {/* Todo List 섹션 */}
@@ -325,7 +387,8 @@ setTeam(tmp2);
               }}
             >
               <div style={{ marginBottom: "10px", display: 'flex', position: 'relative'}}>
-                <span style={{fontSize: "16px", fontWeight: "bold" }}>PMS Assistant</span>
+                <span style={{fontSize: "16px", fontWeight: "bold" }}>PMS Advisor</span>
+                <SectionTooltip message={"Google Gemini를 활용한 LLM입니다. \n팀장이 API Key를 입력해주세요."}/>
                 {(leaderPermission === null || !leaderPermission) ? (<div></div>) : (
                   <div style={{position: 'absolute', right: '0', bottom: '0'}}><LLMManagement pid={props.params.id}/></div>
                 )}

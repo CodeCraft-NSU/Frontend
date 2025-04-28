@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getUnivId } from "@/app/util/storage";
 import usePermissionGuard from "@/app/util/usePermissionGuard";
+import SectionTooltip from "@/app/components/SectionTooltip"
 
 type userList = {
   univ_id: number,
@@ -69,8 +70,13 @@ export default function MeetingMinutesForm(props: any) {
         headers: { Authorization: process.env.SECRET_API_KEY },
       });
       // router.push(`/project-main/${props.params.id}/outputManagement`);
-      const tmpDoc = response.data.PAYLOADS.doc_s_no
-      handleUploadFile(tmpDoc)
+      const tmpDoc = response.data.PAYLOADS.doc_m_no
+      if (tmpfile.length === 0) {
+        router.push(`/project-main/${props.params.id}/outputManagement`);
+      }else{
+        handleUploadFile(tmpDoc)
+      }
+      
     } catch (error) {
       alert("저장 중 오류가 발생했습니다.");
     }
@@ -137,10 +143,7 @@ export default function MeetingMinutesForm(props: any) {
             formData,
             { headers: { Authorization: process.env.SECRET_API_KEY } }
         );
-
-        if (response.data.RESULT_CODE === 200) {
             router.push(`/project-main/${props.params.id}/outputManagement`);
-        }
     } catch (err) {
         alert('❌ 파일 업로드 실패');
     }
@@ -154,77 +157,104 @@ export default function MeetingMinutesForm(props: any) {
       <div style={layoutContainerStyle}>
         <MainSide pid={props.params.id} />
         <div style={contentContainerStyle}>
-          <h2 style={sectionHeaderStyle}>📄 회의록 작성</h2>
+          <h2 style={sectionHeaderStyle}>📄 회의록 작성 <SectionTooltip message="회의에서 논의된 내용과 결정 사항을 기록하고 후속 작업을 관리합니다." /> </h2>
 
           <table style={tableStyle}>
-            <tbody>
-              <tr>
-                <td style={thStyle}>안건</td>
-                <td colSpan={3} style={tdStyle}><Field value={agenda} setter={setAgenda} /></td>
-              </tr>
-              <tr>
-                <td style={thStyle}>회의 날짜</td>
-                <td style={tdStyle}><Field type="date" value={meetingDate} setter={setMeetingDate} /></td>
-              </tr>
-              <tr>
-                <td style={thStyle}>장소</td>
-                <td colSpan={3} style={tdStyle}><Field value={location} setter={setLocation} /></td>
-              </tr>
-              <tr>
-                <td style={thStyle}>책임자명</td>
-                <td colSpan={3} style={tdStyle}><Field value={responsiblePerson} setter={setResponsiblePerson} /></td>
-              </tr>
-              <tr><td colSpan={4} style={thStyle}>회의 내용</td></tr>
-              <tr><td colSpan={4} style={tdStyle}><TextAreaField value={meetingContent} setter={setMeetingContent} /></td></tr>
-              <tr><td colSpan={4} style={thStyle}>회의 결과</td></tr>
-              <tr><td colSpan={4} style={tdStyle}><TextAreaField value={meetingResult} setter={setMeetingResult} /></td></tr>
+  <tbody>
+    <tr>
+      <td style={thStyle}>
+        안건
+        <SectionTooltip message="회의의 주요 주제를 입력하세요." />
+      </td>
+      <td colSpan={3} style={tdStyle}><Field value={agenda} setter={setAgenda} /></td>
+    </tr>
+    <tr>
+      <td style={thStyle}>
+        회의 날짜
+        <SectionTooltip message="회의가 열린 날짜를 입력하세요." />
+      </td>
+      <td style={tdStyle}><Field type="date" value={meetingDate} setter={setMeetingDate} /></td>
+    </tr>
+    <tr>
+      <td style={thStyle}>
+        장소
+        <SectionTooltip message="회의가 진행된 장소를 입력하세요." />
+      </td>
+      <td colSpan={3} style={tdStyle}><Field value={location} setter={setLocation} /></td>
+    </tr>
+    <tr>
+      <td style={thStyle}>
+        책임자명
+        <SectionTooltip message="회의 진행 책임자의 이름을 입력하세요." />
+      </td>
+      <td colSpan={3} style={tdStyle}><Field value={responsiblePerson} setter={setResponsiblePerson} /></td>
+    </tr>
 
-              <tr>
-  <td style={thStyle}>참석자</td>
-  <td colSpan={3} style={tdStyle}>
-    {participants.map((participant, index) => (
-      <div key={index} style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "10px" }}>
-        {/* ✅ 성명 선택 (드롭다운) */}
-        <label>성명:</label>
-        <select
-          value={participant.name}
-          onChange={(e) => updateParticipant(index, "name", e.target.value)}
-          style={participantNameStyle}
-        >
-          <option value="">참석자 선택</option>
-          {user.map((u) => (
-            <option key={u.univ_id} value={u.name}>
-              {u.name} {/* ✅ 이름만 표시 */}
-            </option>
-          ))}
-        </select>
+    <tr>
+      <td colSpan={4} style={thStyle}>
+        회의 내용
+        <SectionTooltip message="논의된 주요 내용을 상세히 작성하세요." />
+      </td>
+    </tr>
+    <tr><td colSpan={4} style={tdStyle}><TextAreaField value={meetingContent} setter={setMeetingContent} /></td></tr>
 
-        {/* ✅ 학번 자동 입력 */}
-        <label>학번:</label>
-        <input
-          type="text"
-          value={participant.studentId}
-          readOnly // 학번은 자동 입력
-          style={participantIdStyle}
-        />
+    <tr>
+      <td colSpan={4} style={thStyle}>
+        회의 결과
+        <SectionTooltip message="회의 결과와 결정사항을 요약하세요." />
+      </td>
+    </tr>
+    <tr><td colSpan={4} style={tdStyle}><TextAreaField value={meetingResult} setter={setMeetingResult} /></td></tr>
 
-        {/* 삭제 버튼 */}
-        <button onClick={() => removeParticipant(index)} style={deleteButtonStyle}>삭제</button>
-      </div>
-    ))}
+    <tr>
+      <td style={thStyle}>
+        참석자
+        <SectionTooltip message="회의에 참석한 사람의 이름과 학번을 입력하세요." />
+      </td>
+      <td colSpan={3} style={tdStyle}>
+        {participants.map((participant, index) => (
+          <div key={index} style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "10px" }}>
+            <label>성명:
+              <SectionTooltip message="참석자 이름을 선택하세요." />
+            </label>
+            <select
+              value={participant.name}
+              onChange={(e) => updateParticipant(index, "name", e.target.value)}
+              style={participantNameStyle}
+            >
+              <option value="">참석자 선택</option>
+              {user.map((u) => (
+                <option key={u.univ_id} value={u.name}>
+                  {u.name}
+                </option>
+              ))}
+            </select>
 
-    {/* 참석자 추가 버튼 */}
-    <button onClick={addParticipant} style={addButtonStyle}>참석자 추가</button>
-  </td>
-</tr>
+            <label>학번:
+              <SectionTooltip message="참석자의 학번이 자동 입력됩니다." />
+            </label>
+            <input
+              type="text"
+              value={participant.studentId}
+              readOnly
+              style={participantIdStyle}
+            />
 
-            </tbody>
-          </table>
+            <button onClick={() => removeParticipant(index)} style={deleteButtonStyle}>삭제</button>
+          </div>
+        ))}
+        <button onClick={addParticipant} style={addButtonStyle}>참석자 추가</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
           <div>
                     <div style={formContainerStyle}>
                       <div style={{display: 'flex', width: '100%'}}>
                         <span style={{ fontSize: '16px', color: '#6b7280', whiteSpace: 'pre-wrap', alignSelf: 'flex-start' }}>
-                            {`프로젝트와 관련된 파일을 업로드하세요.\n한번에 여러개의 파일을 업로드할 수 있습니다..`}
+                            {`프로젝트와 관련된 파일을 업로드하세요.\n한번에 여러개의 파일을 업로드할 수 있습니다.`}
+                            <SectionTooltip message="회의록과 관련된 파일을 업로드하세요. 여러 파일 업로드가 가능합니다." />
                         </span>
                         <div style={{marginLeft: 'auto', width: '40%'}}>
                         <input type="file" multiple onChange={handleFileChange} style={fileInputStyle} ref={fileInputRef} />

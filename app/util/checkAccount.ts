@@ -5,7 +5,7 @@ import { getUnivId, getToken, getUserId } from "./storage"
 import { useEffect, useState } from "react"
 import axios from "axios"
 
-export default function useSessionGuard(): number | null{ // kickReverse -> true: 세션 안 맞으면 퇴출 / false: 세션 맞으면 퇴출
+export default function useSessionGuard(): number | null{
     const router = useRouter();
     const [sessionValid, setSessionValid] = useState<number | null>(null);
     useEffect(() => {

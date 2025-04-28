@@ -9,6 +9,8 @@ import usePermissionGuard from "@/app/util/usePermissionGuard";
 import { wfOptions, agileOptions } from "@/app/util/wbs";
 import { useRouter } from "next/navigation";
 import useSessionGuard from "@/app/util/checkAccount";
+import SectionTooltip from "@/app/components/SectionTooltip"
+
 
 interface WbsRow {
   id: string;
@@ -618,7 +620,8 @@ export default function Main(props: any) {
           
 
           
-          <h2>{model === "Waterfall" ? "폭포수 모델" : (model === "Agile" ? "애자일 모델" : "기타 모델")} WBS</h2>
+          <h2>{model === "Waterfall" ? "폭포수 모델" : (model === "Agile" ? "애자일 모델" : "기타 모델")} WBS <SectionTooltip message="WBS는 프로젝트를 세부 작업 단위로 분해한 계층 구조입니다. 일정/인력/비용 산정의 기초가 됩니다." />
+          </h2>
 
           {/* 모델 선택 및 데이터 관리 */}
           <div style={{ marginBottom: "20px", height: '30px' }}>
@@ -733,7 +736,7 @@ export default function Main(props: any) {
                         {/* WBS 위자드 */}
                         {/* 제목 */}
                         <div>
-                          <span style={{padding: '5px', fontSize: '24px'}}>WBS 위자드</span>
+                          <span style={{padding: '5px', fontSize: '24px'}}>WBS 위자드<SectionTooltip message="WBS의 초기 셋팅을 도와주는 도움말 입니다." /> </span>
                         </div>
                         {/* Form */}
                         <form onSubmit={(e) => e.preventDefault()} >
@@ -1058,7 +1061,7 @@ export default function Main(props: any) {
                 <th style={{ padding: "10px", border: "1px solid #ddd" }}>마감일</th>
                 {/* <th style={{ padding: "10px", border: "1px solid #ddd" }}>완료</th> */}
                 <th style={{ padding: "10px", border: "1px solid #ddd" }}>위/아래</th>
-                <th style={{ padding: "10px", border: "1px solid #ddd" }}>삭제5</th>
+                <th style={{ padding: "10px", border: "1px solid #ddd" }}>삭제</th>
               </tr>
             </thead>
             <tbody>

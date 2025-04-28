@@ -9,6 +9,7 @@ import { getUnivId } from '@/app/util/storage'
 import usePermissionGuard from '@/app/util/usePermissionGuard'
 import { useRouter } from "next/navigation"
 import useSessionGuard from "../util/checkAccount"
+import SectionTooltip from "./SectionTooltip";
 
 type taskType = {
   p_no: number
@@ -83,12 +84,15 @@ const TaskTable = ({ page, p_id }: { page: number, p_id: number }) => {
         boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h1 style={{
-            fontSize: '26px',
-            fontWeight: 'bold',
-            color: '#333',
-            margin: 0
-          }}>{MsBox.task.tTitle.value}</h1>
+          <div style={{display: "flex"}}>
+            <h1 style={{
+              fontSize: '26px',
+              fontWeight: 'bold',
+              color: '#333',
+              margin: 0
+            }}>{MsBox.task.tTitle.value}</h1>
+            <SectionTooltip message={"WBS에 포함하기에는 사소하거나 세부적인 작업을 위한 업무 관리 서비스입니다.\nex. 발표 준비, 교수님 미팅 등."}/>
+          </div>
           {writePermission && <AddTask p_id={p_id} />}
         </div>
 

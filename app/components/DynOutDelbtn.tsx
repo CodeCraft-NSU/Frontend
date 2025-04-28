@@ -18,7 +18,7 @@ const handleDelbtn = async (data: delData, pid: number): Promise<boolean> => {
             case MsBox.outType.etc.value:
                 const formData = new FormData();
                 formData.append('file_unique_id', data.oid.toString());
-                await axios.post("https://cd-api.chals.kim/api/output/otherdoc_delete", formData, { headers: { Authorization: process.env.SECRET_API_KEY } });
+                await axios.post("https://cd-api.chals.kim/api/output/otherdoc_delete", {file_no: data.oid}, { headers: { Authorization: process.env.SECRET_API_KEY } });
                 break;
             case MsBox.outType.overview.value:
                 await axios.post("https://cd-api.chals.kim/api/output/sum_doc_delete", postData, { headers: { Authorization: process.env.SECRET_API_KEY } });

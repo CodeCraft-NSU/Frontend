@@ -40,7 +40,7 @@ export default function OutputManagement({ params, searchParams }: { params: { i
                         }}
                     >
                         <p style={{ fontSize: '16px', color: '#6b7280' }}>
-                            현재 프로젝트 산출물을 관리하고 확인하세요. 산출물 제목을 클릭하여 세부 내용을 확인할 수 있습니다.
+                            현재 프로젝트 산출물을 관리하고 확인하세요. 산출물 폴더를 클릭하여 세부 내용을 확인할 수 있습니다.
                         </p>
                     </div>
 

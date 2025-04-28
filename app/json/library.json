@@ -4,11 +4,23 @@
     "reqspec": { "name": "요구사항.docx", "link": "/public/library/요구사항.docx" },
     "testcase": { "name": "테스트케이스.docx", "link": "/public/library/테스트케이스.docx" },
     "meeting_minutes": { "name": "회의록.docx", "link": "/public/library/회의록.docx" },
+    "test": {"name": "단위테스트.xlsx", "link": "/public/library/단위테스트.xlsx"},
+    "table": {"name": "테이블정의서.xlsx", "link": "/public/library/테이블정의서.xlsx"},
+    "plan": {"name": "프로젝트 수행계획서.doc", "link": "/public/library/프로젝트 수행계획서.doc"},
+    "sow": {"name": "sow.hwp", "link": "/public/library/sow.hwp"},
+    "ui": {"name": "UI 설계서.pptx", "link": "/public/library/UI 설계서.pptx"},
+    "wbs": {"name": "wbs.xls", "link": "/public/library/wbs.xls"},
     "list": [
         {"key": 0, "type": "summary", "name": "개요서.docx"},
         {"key": 1, "type": "report", "name": "보고서.docx"},
         {"key": 2, "type": "reqspec", "name": "요구사항.docx"},
         {"key": 3, "type": "testcase", "name": "테스트케이스.docx"},
-        {"key": 4, "type": "meeting_minutes", "name": "회의록.docx"}
+        {"key": 4, "type": "meeting_minutes", "name": "회의록.docx"},
+        {"key": 5, "type": "test", "name": "단위테스트.xlsx"},
+        {"key": 6, "type": "table", "name": "테이블정의서.xlsx"},
+        {"key": 7, "type": "plan", "name": "프로젝트 수행계획서.doc"},
+        {"key": 8, "type": "sow", "name": "sow.hwp"},
+        {"key": 9, "type": "ui", "name": "UI 설계서.pptx"},
+        {"key": 10, "type": "wbs", "name": "wbs.xls"}
     ]
 }

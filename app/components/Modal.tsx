@@ -529,7 +529,7 @@ export function AddUser({p_id}: {p_id: number}) {
                 }else{
                     const response = await axios.post("https://cd-api.chals.kim/api/pm/add_default", {pid: p_id, univ_id: hak}, {headers:{Authorization: process.env.SECRET_API_KEY}});
                 }
-                usePageReload()
+                window.location.reload();
             }
         }catch(err){
             console.log(err)
@@ -735,9 +735,8 @@ export function AddTask({p_id}: {p_id: number}){
         const data = tmpData;
         try{
             const response = await axios.post<returnType>("https://cd-api.chals.kim/api/task/add", data, {headers:{Authorization: process.env.SECRET_API_KEY}});
-            if(response.data.RESULT_CODE === 200){usePageReload()}
+            window.location.reload();
         } catch(err){
-            alert('error');
         }
         
     };
@@ -905,11 +904,12 @@ export function ConfigTask({data, p_id}: {data: inputTaskType, p_id: number}){
     const fixTask = async() => {
         try{
             const response = await axios.post<postType>("https://cd-api.chals.kim/api/task/edit", postData, {headers:{Authorization: process.env.SECRET_API_KEY}});
+            window.location.reload();
         }catch(err){
 
         }finally{
             closeModal();
-            reloadPage();
+            window.location.reload();
         }
     }
     const getData = async() => {
@@ -926,7 +926,7 @@ export function ConfigTask({data, p_id}: {data: inputTaskType, p_id: number}){
             const response = await axios.post<returnType>("https://cd-api.chals.kim/api/task/delete", tidData, {headers:{Authorization: process.env.SECRET_API_KEY}});
             if(response.data.RESULT_CODE === 200){
                 closeModal()
-                reloadPage()
+                window.location.reload();
             }
         }catch(err){
         }

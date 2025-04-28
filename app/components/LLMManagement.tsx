@@ -3,6 +3,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { getUnivId } from '@/app/util/storage'
+import SectionTooltip from "./SectionTooltip";
+import SectionTooltipWithChild from "./SectionTooltipwithChild";
 
 const LLMManagement = ({pid}: {pid: number}) => {
     const [apiKey, setApiKey] = useState("");
@@ -93,6 +95,17 @@ const LLMManagement = ({pid}: {pid: number}) => {
                 >
                     <div style={{margin: '5px 0', position: 'relative', }}>
                         <span style={{fontSize: '20px'}}>API Key 입력</span>
+                        <SectionTooltipWithChild>
+                            <a 
+                                href="https://ai.google.dev/" 
+                                target="_blank" 
+                                rel="" 
+                                style={{ textDecoration: 'underline', color: 'skyblue', marginLeft: '4px' }}
+                            >
+                                Google Gemini API Key
+                            </a>
+                            를 발급해 입력해주세요.
+                        </SectionTooltipWithChild>
                         <button 
                             onClick={handleToggle}
                             style={{

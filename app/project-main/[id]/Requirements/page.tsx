@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getUnivId } from "@/app/util/storage";
 import usePermissionGuard from "@/app/util/usePermissionGuard";
+import SectionTooltip from "@/app/components/SectionTooltip"
 
 type postType = {
   feature_name: string
@@ -58,7 +59,7 @@ export default function RequirementsForm(props: any) {
         headers: { Authorization: process.env.SECRET_API_KEY },
       });
       // router.push(`/project-main/${props.params.id}/outputManagement`);
-      const tmpDoc = response.data.PAYLOADS.doc_s_no
+      const tmpDoc = response.data.PAYLOADS.doc_r_no
       handleUploadFile(tmpDoc)
     } catch (err) {
       alert("저장 중 오류가 발생했습니다.");
@@ -83,6 +84,7 @@ export default function RequirementsForm(props: any) {
 
   const handleUploadFile = async (doc_id: number) => {
     if (tmpfile.length === 0) {
+        router.push(`/project-main/${props.params.id}/outputManagement`);
         return;
     }
     const tmppid: number = props.params.id;
@@ -102,10 +104,7 @@ export default function RequirementsForm(props: any) {
             formData,
             { headers: { Authorization: process.env.SECRET_API_KEY } }
         );
-
-        if (response.data.RESULT_CODE === 200) {
             router.push(`/project-main/${props.params.id}/outputManagement`);
-        }
     } catch (err) {
         alert('❌ 파일 업로드 실패');
     }
@@ -117,19 +116,55 @@ export default function RequirementsForm(props: any) {
       <div style={layoutContainerStyle}>
         <MainSide pid={props.params.id} />
         <div style={contentContainerStyle}>
-          <h2 style={sectionHeaderStyle}>📝 요구사항 작성 ver.2</h2>
+          <h2 style={sectionHeaderStyle}>📝 요구사항 작성 <SectionTooltip message="사용자의 니즈를 바탕으로 시스템이 제공해야 할 기능을 정리한 기술 문서입니다." /></h2>
 
           <table style={tableStyle}>
             <tbody>
               <tr><td colSpan={4} style={sectionThStyle}>📌 기본 정보</td></tr>
-              <tr><td style={thStyle}>작성일</td><td colSpan={3} style={tdStyle}><Field type="date" value={creationDate} setter={setCreationDate} /></td></tr>
+              <tr>
+                <td style={thStyle}>
+                  작성일
+                  <SectionTooltip message="문서를 작성한 날짜를 입력하세요." />
+                </td>
+                <td colSpan={3} style={tdStyle}><Field type="date" value={creationDate} setter={setCreationDate} /></td>
+              </tr>
+
               <tr><td colSpan={4} style={sectionThStyle}>📌 시스템 요구사항</td></tr>
-              <tr><td style={thStyle}>요구사항</td><td colSpan={3} style={tdStyle}><TextAreaField value={systemRequirements} setter={setSystemRequirements} /></td></tr>
-              <tr><td style={thStyle}>설명</td><td colSpan={3} style={tdStyle}><TextAreaField value={systemDes} setter={setSystemDes} /></td></tr>
+              <tr>
+                <td style={thStyle}>
+                  요구사항
+                  <SectionTooltip message="시스템이 갖춰야 할 필수 기능을 입력하세요." />
+                </td>
+                <td colSpan={3} style={tdStyle}><TextAreaField value={systemRequirements} setter={setSystemRequirements} /></td>
+              </tr>
+              <tr>
+                <td style={thStyle}>
+                  설명
+                  <SectionTooltip message="시스템 요구사항에 대한 상세 설명을 작성하세요." />
+                </td>
+                <td colSpan={3} style={tdStyle}><TextAreaField value={systemDes} setter={setSystemDes} /></td>
+              </tr>
+
               <tr><td colSpan={4} style={sectionThStyle}>📌 기능 요구사항</td></tr>
-              <tr><td style={thStyle}>요구사항</td><td colSpan={3} style={tdStyle}><TextAreaField value={functionalRequirements} setter={setFunctionalRequirements} /></td></tr>
-              <tr><td style={thStyle}>설명</td><td colSpan={3} style={tdStyle}><TextAreaField value={functionalDes} setter={setFunctionalDes} /></td></tr>
-              <tr><td style={thStyle}>우선순위</td>
+              <tr>
+                <td style={thStyle}>
+                  요구사항
+                  <SectionTooltip message="사용자가 시스템에서 수행할 수 있어야 하는 주요 기능을 작성하세요." />
+                </td>
+                <td colSpan={3} style={tdStyle}><TextAreaField value={functionalRequirements} setter={setFunctionalRequirements} /></td>
+              </tr>
+              <tr>
+                <td style={thStyle}>
+                  설명
+                  <SectionTooltip message="기능 요구사항에 대한 세부 설명을 작성하세요." />
+                </td>
+                <td colSpan={3} style={tdStyle}><TextAreaField value={functionalDes} setter={setFunctionalDes} /></td>
+              </tr>
+              <tr>
+                <td style={thStyle}>
+                  우선순위
+                  <SectionTooltip message="기능 요구사항의 중요도를 설정하세요. 1:낮음, 2:보통, 3:높음" />
+                </td>
                 <td colSpan={3} style={tdStyle}>
                   <select value={functionalRequirementsPriority} onChange={(e) => setFunctionalRequirementsPriority(Number(e.target.value))} style={selectStyle}>
                     <option value={1}>낮음 (1)</option>
@@ -138,10 +173,27 @@ export default function RequirementsForm(props: any) {
                   </select>
                 </td>
               </tr>
+
               <tr><td colSpan={4} style={sectionThStyle}>📌 비기능 요구사항</td></tr>
-              <tr><td style={thStyle}>요구사항</td><td colSpan={3} style={tdStyle}><TextAreaField value={nonFunctionalRequirements} setter={setNonFunctionalRequirements} /></td></tr>
-              <tr><td style={thStyle}>설명</td><td colSpan={3} style={tdStyle}><TextAreaField value={nonFunctionalDes} setter={setNonFunctionalDes} /></td></tr>
-              <tr><td style={thStyle}>우선순위</td>
+              <tr>
+                <td style={thStyle}>
+                  요구사항
+                  <SectionTooltip message="성능, 보안성, 신뢰성 등 기능 이외의 요구사항을 작성하세요." />
+                </td>
+                <td colSpan={3} style={tdStyle}><TextAreaField value={nonFunctionalRequirements} setter={setNonFunctionalRequirements} /></td>
+              </tr>
+              <tr>
+                <td style={thStyle}>
+                  설명
+                  <SectionTooltip message="비기능 요구사항에 대한 세부 설명을 작성하세요." />
+                </td>
+                <td colSpan={3} style={tdStyle}><TextAreaField value={nonFunctionalDes} setter={setNonFunctionalDes} /></td>
+              </tr>
+              <tr>
+                <td style={thStyle}>
+                  우선순위
+                  <SectionTooltip message="비기능 요구사항의 중요도를 설정하세요. 1:낮음, 2:보통, 3:높음" />
+                </td>
                 <td colSpan={3} style={tdStyle}>
                   <select value={nonFunctionalRequirementsPriority} onChange={(e) => setNonFunctionalRequirementsPriority(Number(e.target.value))} style={selectStyle}>
                     <option value={1}>낮음 (1)</option>
@@ -152,23 +204,22 @@ export default function RequirementsForm(props: any) {
               </tr>
             </tbody>
           </table>
+
           <div>
-                    <div style={formContainerStyle}>
-                      <div style={{display: 'flex', width: '100%'}}>
-                        <span style={{ fontSize: '16px', color: '#6b7280', whiteSpace: 'pre-wrap', alignSelf: 'flex-start' }}>
-                            {`프로젝트와 관련된 파일을 업로드하세요.\n한번에 여러개의 파일을 업로드할 수 있습니다..`}
-                        </span>
-                        <div style={{marginLeft: 'auto', width: '40%'}}>
-                        <input type="file" multiple onChange={handleFileChange} style={fileInputStyle} ref={fileInputRef} />
-                        </div>
-                        
-                      </div>
-                        
-                        <button onClick={handleResetFile} style={uploadButtonStyle}>
-                            📤 제거
-                        </button>
-                    </div>
+            <div style={formContainerStyle}>
+              <div style={{ display: 'flex', width: '100%' }}>
+                <span style={{ fontSize: '16px', color: '#6b7280', whiteSpace: 'pre-wrap', alignSelf: 'flex-start' }}>
+                  {`프로젝트와 관련된 파일을 업로드하세요.\n한번에 여러개의 파일을 업로드할 수 있습니다.`}
+                  <SectionTooltip message="요구사항과 관련된 문서를 업로드하세요. 여러 파일 업로드가 가능합니다." />
+                </span>
+                <div style={{ marginLeft: 'auto', width: '40%' }}>
+                  <input type="file" multiple onChange={handleFileChange} style={fileInputStyle} ref={fileInputRef} />
                 </div>
+              </div>
+              <button onClick={handleResetFile} style={uploadButtonStyle}>📤 제거</button>
+            </div>
+          </div>
+
           <div style={buttonContainerStyle}>
             <ActionButton label="저장" onClick={handleSave} color="#2196F3" />
           </div>

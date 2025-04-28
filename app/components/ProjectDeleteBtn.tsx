@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 import { getUnivId } from "../util/storage"
+import SectionTooltip from "@/app/components/SectionTooltip"
 
 const PJDelBtn = ({ pid }: { pid: number }) => {
   const [text, setText] = useState('');
@@ -44,7 +45,7 @@ const PJDelBtn = ({ pid }: { pid: number }) => {
       }}
     >
       <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '20px' }}>
-        🗑️ 프로젝트 삭제
+        🗑️ 프로젝트 삭제 <SectionTooltip message="해당 프로젝트를 삭제하는 곳입니다." />
       </h2>
 
       <div

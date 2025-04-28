@@ -6,12 +6,13 @@ import { getUnivId } from "../util/storage";
 import usePermissionGuard from "../util/usePermissionGuard";
 
 const LLMChat = ({pid}: {pid: number}) => {
-    const [messages, setMessages] = useState<string[]>(['인녕하세요. 프로젝트 진행을 도와드릴 PMS Assistant입니다.']);
+    const [messages, setMessages] = useState<string[]>(['인녕하세요. 프로젝트 진행을 도와드릴 PMS Advisor입니다.']);
     const messageBox: {[key: number]: string} = {
         0: "현재 이 프로젝트의 진행 상태를 전반적으로 분석해줘.",
         1: "현재 이 프로젝트의 진행 상황을 바탕으로, 잠재적인 리스크 요소들을 분석해줘.",
-        2: "현재 이 프로젝트에서 작성된 산출물(온라인 산출물과 기타 산출물)의 내용을 바탕으로, 각 산출물의 주요 구성 요소와 특징을 분석해줘.",
-        3: "현재 이 프로젝트에서 작성된 산출물(온라인 산출물과 기타 산출물)의 품질을 평가해줘."
+        2: "현재 이 프로젝트는 주제만 선정된 초기 단계야. 프로젝트 설명과 개발 방식을 바탕으로 다음 내용을 중심으로 간략하게 조언해줘",
+        3: "현재 이 프로젝트에서 작성된 산출물(온라인 산출물과 기타 산출물)의 내용을 바탕으로, 각 산출물의 주요 구성 요소와 특징을 분석해줘.",
+        4: "현재 이 프로젝트에서 작성된 산출물(온라인 산출물과 기타 산출물)의 품질을 평가해줘."
     }
     const infoBox: {[key: number]: string} = {
         0: `대학생을 위한 Project Management System(PMS)은
@@ -406,7 +407,7 @@ PMS에서는 프로토타입 방식처럼 비정형적인 흐름을 직접적으
                         case "INIT_0":
                             content = (
                                 <>
-                                <span>PMS Assistant에게 묻고싶은 메뉴를 선택해주세요. ver.11</span>
+                                <span>PMS Advisor에게 묻고싶은 메뉴를 선택해주세요.</span>
                                 <div style={{ marginTop: "20px" }}>
                                 <ChatbotButton label="📋 프로젝트" onClick={() => handleMessageChange("INIT_1")} />
                                 <ChatbotButton label="📂 산출물" onClick={() => handleMessageChange("INIT_2")} />
@@ -490,7 +491,7 @@ PMS에서는 프로토타입 방식처럼 비정형적인 흐름을 직접적으
             </div>
 
             {/* 입력창 영역 */}
-            <div
+            {/* <div
                 style={{
                     height: '40px',
                     display: 'flex',
@@ -529,7 +530,7 @@ PMS에서는 프로토타입 방식처럼 비정형적인 흐름을 직접적으
                 >
                     {(nowLoading ? "로딩 중" : "확인")}
                 </button>
-            </div>
+            </div> */}
         </div>
     )
 }

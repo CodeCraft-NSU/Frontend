@@ -10,6 +10,7 @@ import {
   getName,
   clearStorage,
 } from "../util/storage";
+import SideAccount from "./SideAccount";
 
 const MainSide = ({ pid }: { pid: number }) => {
   const router = useRouter();
@@ -131,41 +132,7 @@ const MainSide = ({ pid }: { pid: number }) => {
       }}
     >
       {/* 내 정보 카드 */}
-      <div
-        style={{
-          backgroundColor: "#fff",
-          borderRadius: "10px",
-          padding: "16px",
-          marginBottom: "20px",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "10px",
-          }}
-        >
-          <strong style={{ fontSize: "16px" }}>📌 내 정보</strong>
-          <button
-            onClick={signout}
-            style={{
-              background: "#e53935",
-              color: "#fff",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "11px",
-              padding: "4px 10px",
-              cursor: "pointer",
-            }}
-          >
-            로그아웃
-          </button>
-        </div>
-        <p style={{ fontSize: "14px", margin: "4px 0" }}>이름 : {myName}</p>
-        <p style={{ fontSize: "14px", margin: "4px 0" }}>학번/교번 : {univId}</p>
-      </div>
+      <SideAccount />
 
       {/* 메뉴 영역 */}
       {menuData.map((menu, i) => (
